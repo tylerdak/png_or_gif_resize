@@ -1,11 +1,5 @@
 from PIL import Image
-# import urllib.request
-import io
 import os
-import time
-import argparse
-
-from numpy import number
 
 
 def resize_gif(data, save_as, resize_to=None):
