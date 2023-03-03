@@ -8,5 +8,5 @@ setup(
     author_email="tyler@dakin.one",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    setup_requires=["Pillow==9.4.0"]
+    install_requires=["Pillow==9.4.0"]
 )
