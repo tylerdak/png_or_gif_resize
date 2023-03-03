@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="resize_image",
+    name="resizeImage",
     version="0.1",
     # Author details
     author="Tyler Dakin",
