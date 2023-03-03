@@ -1,31 +1,12 @@
 from PIL import Image
-import urllib.request
+# import urllib.request
 import io
+import os
 import time
 import argparse
 
 from numpy import number
 
-g_user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
-g_fetch_data_retry_count = 3
-
-
-def get_data_from_url(url):
-    retry_count = 0
-    while True:
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": g_user_agent})
-            with urllib.request.urlopen(req) as u:
-                f = io.BytesIO(u.read())
-                if retry_count:
-                    print("Retry count", retry_count)
-                return f
-        except Exception as e:
-            if retry_count == g_fetch_data_retry_count:
-                print("Failed to fetch data from ", url)
-                return None
-            retry_count += 1
-            time.sleep(3)
 
 def resize_gif(data, save_as, resize_to=None):
     """
@@ -37,14 +18,14 @@ def resize_gif(data, save_as, resize_to=None):
         resize_to (optional): new size of the gif. Format: (int, int). If not set, the original GIF will be resized to
                               half of its size.
     """
-    all_frames = extract_and_resize_frames(data, resize_to)
+    all_frames,duration = extract_and_resize_frames(data, resize_to)
     print (len(all_frames))
 
     if len(all_frames) == 1:
         print("Warning: only 1 frame found")
         all_frames[0].save(save_as, optimize=True)
     else:
-        all_frames[0].save(save_as, optimize=True, save_all=True, append_images=all_frames[1:], loop=1000)
+        all_frames[0].save(save_as, optimize=True, save_all=True, append_images=all_frames[1:], duration=duration, loop=0)
 
 def resize_png(data, save_as, resize_to=None):
     im = Image.open(data)
@@ -110,8 +91,11 @@ def extract_and_resize_frames(data, resize_to=None):
             If the GIF uses local colour tables, each frame will have its own palette.
             If not, we need to apply the global palette to the new frame.
             '''
-            if not im.getpalette():
-                im.putpalette(p)
+            try:
+                if not im.getpalette():
+                    im.putpalette(p)
+            except ValueError:
+                pass
 
             new_frame = Image.new('RGBA', im.size)
 
@@ -133,35 +117,60 @@ def extract_and_resize_frames(data, resize_to=None):
     except EOFError:
         pass
 
-    return all_frames
+    return all_frames, im.info['duration']
 
 def is_gif(data):
     im = Image.open(data)
-    is_png = im.is_animated
+    try:
+        is_png = im.is_animated
+    except AttributeError:
+        # is_animated may not be defined on other static image types
+        is_png = False
     return is_png
 
-def resize_gif_and_png(data, save_as, resize_to=None):
-    is_gif_flag = is_gif(data)
+def resize_gif_and_png(path, save_as, resize_to=None):
 
-    if is_gif_flag:
-        resize_gif(data, save_as + ".gif", resize_to)
+    is_gif_flag = is_gif(path)
+    ext = "." + path.split('.')[-1]
+    print(ext)
+
+    if type(resize_to) == int:
+        # trigger while loop until size threshold is correct
+        # print(os.stat(path).st_size)
+        while int(os.stat(path).st_size/(pow(10,6)))+1 > resize_to:
+            print(os.stat(path))
+            
+            
+            if is_gif_flag:
+                resize_gif(path, save_as + ext, None)
+            else:
+                resize_png(path, save_as + ext, None)
+
+            path = save_as+ext
     else:
-        resize_png(data, save_as + ".png", resize_to)
+        if is_gif_flag:
+            resize_gif(path, save_as + ext, resize_to)
+        else:
+            resize_png(path, save_as + ext, resize_to)
 
-def resize_from_url(url, size):
-    data_gif = get_data_from_url(url)
-    resize_gif_and_png(data_gif, "1-out", size)
+
+    
+            
+
     
 
 
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("url", type=str, help="image url")
-    ap.add_argument("w", help="new image width")
-    ap.add_argument("h",  help="new image height")
-    args = vars(ap.parse_args())
-    url = args.get('url')
-    w = int(args.get('w'))
-    h = int(args.get('h'))
+    
 
-    resize_from_url(url, (w,h))
+
+# if __name__ == "__main__":
+#     ap = argparse.ArgumentParser()
+#     ap.add_argument("url", type=str, help="image url")
+#     ap.add_argument("w", help="new image width")
+#     ap.add_argument("h",  help="new image height")
+#     args = vars(ap.parse_args())
+#     url = args.get('url')
+#     w = int(args.get('w'))
+#     h = int(args.get('h'))
+
+#     resize_from_url(url, (w,h))
