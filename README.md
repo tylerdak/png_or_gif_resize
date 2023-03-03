@@ -15,7 +15,7 @@
 You can use this function in other file.
 ```
 # resize_to can be either:
-# a tuple of two numbers, describing height and width, respectively
+# a tuple of two numbers, describing width and height, respectively
 # or a single int, describing the desired maximum image size in MB
 #		- The program shrinks the image by 4x on each iteration until it fits in the MB limit 
 
