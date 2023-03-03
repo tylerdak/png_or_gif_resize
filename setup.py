@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="resize_image",
-    version="0.1" + "." + BUILD_ID,
+    version="0.1",
     # Author details
     author="Tyler Dakin",
     author_email="tyler@dakin.one",
