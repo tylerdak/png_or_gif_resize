@@ -32,7 +32,7 @@ def resize_png(data, save_as, resize_to=None):
     if not resize_to:
         resize_to = (im.size[0] // 2, im.size[1] // 2)
     im = im.resize(resize_to)
-    im.save(save_as , format="WebP")
+    im.save(save_as)
 
 
 def analyseImage(data):
