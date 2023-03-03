@@ -1,22 +1,23 @@
-# PNG and GIF file Resize from url
+# PNG and GIF file Resize from ~~url~~ previous file
 
 ## Before
 ![DEMO IMAGE](https://github.com/DreamSky1996/png_or_gif_resize/blob/master/img/before.gif)
 ## after
 ![DEMO IMAGE](https://github.com/DreamSky1996/png_or_gif_resize/blob/master/img/after.gif)
 
-### Command
+### ~~Command~~
 ```
-resize.py [-h] url w h
+~~resize.py [-h] url w h~~
 ```
 
-### exmaple
-```
-python resize.py https://danielk.tech/user/pages/01.home/angular-how-to-improve-bundle-size/trim%20the%20imports.gif 100 100
-```
 
 ### code
 You can use this function in other file.
 ```
-resize_from_url(url, size)
+# resize_to can be either:
+# a tuple of two numbers, describing height and width, respectively
+# or a single int, describing the desired maximum image size in MB
+#		- The program shrinks the image by 4x on each iteration until it fits in the MB limit 
+
+resize_gif_and_png(original_filepath, new_filename, resize_to)
 ```
