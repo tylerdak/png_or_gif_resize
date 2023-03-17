@@ -137,7 +137,7 @@ def resize_gif_and_png(path, save_as, resize_to=None):
 			return None
 
 		while int(os.stat(path).st_size/(pow(10,6)))+1 > resize_to:
-			print("[FileResize]: " + path + "file size: " + os.stat(path))
+			print(f"[FileResize]: {path} file size: {os.stat(path)}")
 			
 			
 			if is_gif_flag:
