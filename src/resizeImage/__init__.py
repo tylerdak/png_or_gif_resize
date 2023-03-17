@@ -127,13 +127,14 @@ def resize_gif_and_png(path, save_as, resize_to=None):
 
 	is_gif_flag = is_gif(path)
 	ext = "." + path.split('.')[-1]
-	print(ext)
+
+	print(f"[FileResize] resize_to: {resize_to}, type: {type(resize_to)}")
 
 	if type(resize_to) == int:
 		# trigger while loop until size threshold is correct
 		# print(os.stat(path).st_size)
 		while int(os.stat(path).st_size/(pow(10,6)))+1 > resize_to:
-			print(os.stat(path))
+			print("[FileResize]: " + path + "file size: " + os.stat(path))
 			
 			
 			if is_gif_flag:
