@@ -26,6 +26,7 @@ def resize_png(data, save_as, resize_to=None):
 	if not resize_to:
 		resize_to = (im.size[0] // 2, im.size[1] // 2)
 	im = im.resize(resize_to)
+	print(save_as)
 	im.save(save_as)
 
 
